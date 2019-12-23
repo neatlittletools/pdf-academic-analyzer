@@ -3,8 +3,11 @@
 ## Todo
 
 [ ] Sentiment Analysis - show most negative and most positive sentences
+
 [ ] RESEARCH possibility of adding custom nounphrases for textblob's `noun_phrases` feature
+
 [ ] Output title (test various ways to identify)
+
 ## Up and running
 
 1. `docker-compose up`
