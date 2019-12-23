@@ -21,7 +21,8 @@ Inside the container:
 
 ## Notes
 
-Target file must be put inside `app/input`
+- Target file must be put inside `app/input`
+- currently only takes in PDF files
 
 ```python
 import pdftotext
