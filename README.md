@@ -13,9 +13,9 @@
 ## Up and running
 
 1. `docker-compose up`
-2. `docker-compose exec app bash`
+2. In a new terminal shell: `docker-compose exec app bash`
 Inside the container:
-3. `pip install -r requirements.txt`
+3. `./setup.sh` to run pip install using requirements.txt
 4. `python main.py FILENAME_IN_INPUT_FOLDER`
 
 
