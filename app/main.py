@@ -2,26 +2,58 @@ import sys
 import pdftotext
 from textblob import TextBlob
 import operator
+import pickle
+
+# note: to add new keys to a previous pickle, change below value to Fals
+exit_when_already_exist = True
 
 input_folder_path = "input/"
+pickle_store_path = "cache/store.pickle"
 if len(sys.argv) < 2:
   raise Exception('ERROR: you need to input the filename as the first argument for this script.')
 
 filename = sys.argv[1]
 filename_without_extension = filename.split('.')[0]
 
+try:
+    with open(pickle_store_path,"rb") as pickle_in:
+      print('output store pickle already exists')
+      store = pickle.load(pickle_in)
+      if filename_without_extension in store.keys():
+        print(f'store already has {filename_without_extension} key')
+        if exit_when_already_exist:
+          sys.exit(1)
+      else:
+        print('output store exists but does not have key for this filename')
+except FileNotFoundError:
+    print("analysis store pickle does not exist.")
+
 with open(input_folder_path + filename, "rb") as f:
     pdf = pdftotext.PDF(f)
-# merge everything into one string
 raw_text = "".join(pdf)
-# prepare TextBlob
-blob = TextBlob(raw_text)
-# access noun phrases counts
-np_counts = blob.np_counts
-# sort noun phrases by frequency in reverse order
-np_counts_sorted = sorted(np_counts.items(),key=operator.itemgetter(1),reverse=True)
 
-filtered = np_counts_sorted[:20]
+def analyse_string(string):
+  blob = TextBlob(raw_text)
+  np_counts = blob.np_counts
+  np_counts_sorted = sorted(np_counts.items(),key=operator.itemgetter(1),reverse=True)
+  np_counts_filtered = np_counts_sorted[:20]
+  result = {}
+  result['raw_text'] = raw_text
+  result['np_counts'] = np_counts_sorted
+  result['np_counts_sorted'] = np_counts_sorted
+  result['np_counts_filtered'] = np_counts_filtered
+  return result
 
-for item in filtered:
-  print(item)
+this_text_analysis = analyse_string(raw_text)
+
+with open(pickle_store_path,"wb") as pickle_out:
+  try:
+    store[filename_without_extension] = this_text_analysis
+  except NameError:
+    store = {}
+    store[filename_without_extension] = this_text_analysis
+  finally:
+    pickle.dump(store, pickle_out)
+    pickle_out.close()
+# for item in np_counts_filtered:
+#   print(item)
