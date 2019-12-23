@@ -8,7 +8,7 @@ if len(sys.argv) < 2:
   raise Exception('ERROR: you need to input the filename as the first argument for this script.')
 
 filename = sys.argv[1]
-
+filename_without_extension = filename.split('.')[0]
 
 with open(input_folder_path + filename, "rb") as f:
     pdf = pdftotext.PDF(f)
