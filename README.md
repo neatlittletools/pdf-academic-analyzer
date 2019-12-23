@@ -8,6 +8,8 @@
 
 [ ] Output title (test various ways to identify)
 
+[ ] INIT web UI
+
 ## Up and running
 
 1. `docker-compose up`
