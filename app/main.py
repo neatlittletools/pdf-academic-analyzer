@@ -15,18 +15,18 @@ if len(sys.argv) < 2:
 filename = sys.argv[1]
 filename_without_extension = filename.split('.')[0]
 
-try:
-    with open(pickle_store_path,"rb") as pickle_in:
-      print('output store pickle already exists')
-      store = pickle.load(pickle_in)
-      if filename_without_extension in store.keys():
-        print(f'store already has {filename_without_extension} key')
-        if exit_when_already_exist:
-          sys.exit(1)
-      else:
-        print('output store exists but does not have key for this filename')
-except FileNotFoundError:
-    print("analysis store pickle does not exist.")
+# try:
+#     with open(pickle_store_path,"rb") as pickle_in:
+#       print('output store pickle already exists')
+#       store = pickle.load(pickle_in)
+#       if filename_without_extension in store.keys():
+#         print(f'store already has {filename_without_extension} key')
+#         if exit_when_already_exist:
+#           sys.exit(1)
+#       else:
+#         print('output store exists but does not have key for this filename')
+# except FileNotFoundError:
+#     print("analysis store pickle does not exist.")
 
 with open(input_folder_path + filename, "rb") as f:
     pdf = pdftotext.PDF(f)
@@ -39,12 +39,16 @@ def analyse_string(string):
   np_counts_filtered = np_counts_sorted[:20]
   sentences = string_to_sentences(blob)
   sentences_sentiments = build_sentences_sentiments_list(sentences)
+  sorted_sentences_sentiments = sort_sentences_sentiments(sentences_sentiments)
+  five_most_positive=sorted_sentences_sentiments[-5:]
+  five_most_negative=sorted_sentences_sentiments[:4]
   result = {}
   result['raw_text'] = raw_text
   result['np_counts'] = np_counts_sorted
   result['np_counts_sorted'] = np_counts_sorted
   result['np_counts_filtered'] = np_counts_filtered
   result['sentences_sentiments'] = sentences_sentiments
+  result['sorted_sentences_sentiments'] = sorted_sentences_sentiments
   return result
 
 def string_to_sentences(blob):
@@ -56,16 +60,22 @@ def build_sentences_sentiments_list(sentences):
     result.append({ 'position': index, 'sentence': sentence, 'sentiment': sentence.sentiment })
   return result
 
+# very naive, taking into account only the polarity
+# TODO: set subjectivity treshold
+def sort_sentences_sentiments(sentences_sentiments):
+  selected_sentence = sentences_sentiments[0]
+  return sorted(sentences_sentiments, key=lambda x: getattr(x['sentiment'],'polarity'))
+
 this_text_analysis = analyse_string(raw_text)
 
-with open(pickle_store_path,"wb") as pickle_out:
-  try:
-    store[filename_without_extension] = this_text_analysis
-  except NameError:
-    store = {}
-    store[filename_without_extension] = this_text_analysis
-  finally:
-    pickle.dump(store, pickle_out)
-    pickle_out.close()
+# with open(pickle_store_path,"wb") as pickle_out:
+#   try:
+#     store[filename_without_extension] = this_text_analysis
+#   except NameError:
+#     store = {}
+#     store[filename_without_extension] = this_text_analysis
+#   finally:
+#     pickle.dump(store, pickle_out)
+#     pickle_out.close()
 # for item in np_counts_filtered:
 #   print(item)
