@@ -5,7 +5,7 @@ import operator
 import pickle
 
 # note: to add new keys to a previous pickle, change below value to Fals
-exit_when_already_exist = True
+exit_when_already_exist = False
 
 input_folder_path = "input/"
 pickle_store_path = "cache/store.pickle"
@@ -37,11 +37,23 @@ def analyse_string(string):
   np_counts = blob.np_counts
   np_counts_sorted = sorted(np_counts.items(),key=operator.itemgetter(1),reverse=True)
   np_counts_filtered = np_counts_sorted[:20]
+  sentences = string_to_sentences(blob)
+  sentences_sentiments = build_sentences_sentiments_list(sentences)
   result = {}
   result['raw_text'] = raw_text
   result['np_counts'] = np_counts_sorted
   result['np_counts_sorted'] = np_counts_sorted
   result['np_counts_filtered'] = np_counts_filtered
+  result['sentences_sentiments'] = sentences_sentiments
+  return result
+
+def string_to_sentences(blob):
+  return blob.sentences
+
+def build_sentences_sentiments_list(sentences):
+  result = []
+  for index, sentence in enumerate(sentences):
+    result.append({ 'position': index, 'sentence': sentence, 'sentiment': sentence.sentiment })
   return result
 
 this_text_analysis = analyse_string(raw_text)
