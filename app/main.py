@@ -7,7 +7,7 @@ from utils import print_list
 
 # note: to add new keys to a previous pickle, change below value to Fals
 exit_when_already_exist = False
-
+max_subjectivity = 0.6
 input_folder_path = "input/"
 pickle_store_path = "cache/store.pickle"
 if len(sys.argv) < 2:
@@ -40,7 +40,10 @@ def analyse_string(string):
   np_counts_filtered = np_counts_sorted[:20]
   sentences = string_to_sentences(blob)
   sentences_sentiments = build_sentences_sentiments_list(sentences)
-  sorted_sentences_sentiments = sort_sentences_sentiments(sentences_sentiments)
+
+  filtered_sentences_sentiments = filter_sentences_sentiments(sentences_sentiments)
+  sorted_sentences_sentiments = sort_sentences_sentiments(filtered_sentences_sentiments)
+  
   five_most_positive=sorted_sentences_sentiments[-5:]
   five_most_negative=sorted_sentences_sentiments[:4]
   print_list(five_most_positive)
@@ -65,8 +68,10 @@ def build_sentences_sentiments_list(sentences):
 # very naive, taking into account only the polarity
 # TODO: set subjectivity treshold
 def sort_sentences_sentiments(sentences_sentiments):
-  selected_sentence = sentences_sentiments[0]
   return sorted(sentences_sentiments, key=lambda x: getattr(x['sentiment'],'polarity'))
+
+def filter_sentences_sentiments(sentences_sentiments):
+  return filter(lambda x: (getattr(x['sentiment'],'subjectivity') < max_subjectivity), sentences_sentiments)
 
 this_text_analysis = analyse_string(raw_text)
 
