@@ -4,8 +4,6 @@ from textblob import TextBlob
 import operator
 from utils import print_list
 
-# note: to add new keys to a previous pickle, change below value to Fals
-exit_when_already_exist = False
 max_subjectivity = 0.6
 input_folder_path = "input/"
 if len(sys.argv) < 2:
@@ -51,7 +49,6 @@ def build_sentences_sentiments_list(sentences):
   return result
 
 # very naive, taking into account only the polarity
-# TODO: set subjectivity treshold
 def sort_sentences_sentiments(sentences_sentiments):
   return sorted(sentences_sentiments, key=lambda x: getattr(x['sentiment'],'polarity'))
 
