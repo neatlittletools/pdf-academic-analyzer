@@ -2,8 +2,6 @@
 
 ## Todo
 
-[ ] Sentiment Analysis - set min subjectivity treshold
-
 [ ] RESEARCH possibility of adding custom nounphrases for textblob's `noun_phrases` feature
 
 [ ] Output title (test various ways to identify)
@@ -11,6 +9,8 @@
 [ ] INIT web UI
 
 [ ] change from Pickle to JSON
+
+[ ] parse all Classes and namedtuples in dicts into JSONs
 
 ## Up and running
 
